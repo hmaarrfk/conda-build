@@ -734,3 +734,18 @@ def test_env_var(monkeypatch: MonkeyPatch):
 
     assert "CONDA_BUILD_TEST_NEW" not in os.environ
     assert calls == [1, 1]
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        b"",
+        b"package:\n  name: foo\r\n",
+        "name: café\n".encode(),
+        "name: café\n".encode("latin-1"),
+    ],
+)
+def test_decode_text(data):
+    from bs4 import UnicodeDammit
+
+    assert utils.decode_text(data) == UnicodeDammit(data).unicode_markup
